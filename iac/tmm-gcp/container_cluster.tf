@@ -1,5 +1,12 @@
+# Generate a random 4-character suffix
+resource "random_string" "cluster_suffix" {
+  length  = 4
+  special = false
+  upper   = false
+}
+
 resource "google_container_cluster" "tfer--bc-1" {
-  name               = "bc-1"
+  name               = "bc-1-${random_string.cluster_suffix.result}"
   location           = "us-central1-c"
   description        = "cluster for tmm-fcs"
   project            = "tmm-fcs-444213"
@@ -9,16 +16,9 @@ resource "google_container_cluster" "tfer--bc-1" {
   network            = "projects/tmm-fcs-444213/global/networks/default"
   subnetwork         = "projects/tmm-fcs-444213/regions/us-central1/subnetworks/default"
 
-  initial_node_count = 0
-
   binary_authorization {
     evaluation_mode = "DISABLED"
   }
-
-  # Remove the cluster_autoscaling block
-  # cluster_autoscaling {
-  #   enabled = false
-  # }
 
   ip_allocation_policy {
     cluster_ipv4_cidr_block  = "10.68.0.0/14"
@@ -37,7 +37,7 @@ resource "google_container_cluster" "tfer--bc-1" {
     channel = "REGULAR"
   }
 
-  node_version = "1.30.5-gke.1699000"
+  min_master_version = "1.30.5-gke.1699000"
 
   logging_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
@@ -50,5 +50,22 @@ resource "google_container_cluster" "tfer--bc-1" {
     }
   }
 
-  # Other configurations remain the same...
+  remove_default_node_pool = true
+  initial_node_count       = 1
+}
+
+resource "google_container_node_pool" "primary_nodes" {
+  name       = "primary-node-pool-${random_string.cluster_suffix.result}"
+  location   = "us-central1-c"
+  cluster    = google_container_cluster.tfer--bc-1.name
+  node_count = 1
+
+  node_config {
+    preemptible  = false
+    machine_type = "e2-medium"
+    service_account = "default"
+    oauth_scopes    = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+  }
 }
