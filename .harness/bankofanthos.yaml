@@ -23,7 +23,7 @@ pipeline:
                     identifier: Plan
                     timeout: 10m
                     spec:
-                      provisionerIdentifier: boaplan
+                      provisionerIdentifier: qa123
                       cloudCliConfiguration:
                         command: Apply
                         configFiles:
@@ -40,7 +40,7 @@ pipeline:
                     identifier: apply
                     timeout: 10m
                     spec:
-                      provisionerIdentifier: boaplan
+                      provisionerIdentifier: qa123
                       configuration:
                         type: InheritFromPlan
               rollbackSteps:
