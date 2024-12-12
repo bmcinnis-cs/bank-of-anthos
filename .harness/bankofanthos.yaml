@@ -40,7 +40,7 @@ pipeline:
                     identifier: apply
                     timeout: 10m
                     spec:
-                      provisionerIdentifier: a123
+                      provisionerIdentifier: qa123
                       configuration:
                         type: InheritFromPlan
               rollbackSteps:
