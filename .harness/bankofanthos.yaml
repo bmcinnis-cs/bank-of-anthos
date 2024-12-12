@@ -50,7 +50,7 @@ pipeline:
                     identifier: rollback
                     timeout: 10m
                     spec:
-                      provisionerIdentifier: rollbackboa
+                      provisionerIdentifier: qa123
                       skipRefreshCommand: false
             infrastructureDefinitions:
               - identifier: harnessk8sinfra
