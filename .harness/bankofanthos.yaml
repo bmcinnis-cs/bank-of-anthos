@@ -32,7 +32,7 @@ pipeline:
                               connectorRef: tmmfcs
                               gitFetchType: Branch
                               branch: main
-                              folderPath: https://github.com/bmcinnis-cs/bank-of-anthos/tree/main/iac/tmm-gcp
+                              folderPath: iac/tmm-gcp
                             type: Github
                 - step:
                     type: TerraformApply
