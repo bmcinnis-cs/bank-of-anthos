@@ -11,18 +11,14 @@ resource "google_container_cluster" "tfer--bc-1" {
 
   initial_node_count = 0
 
-  # Remove the entire addons_config block
-  # addons_config {
-  #   ...
-  # }
-
   binary_authorization {
     evaluation_mode = "DISABLED"
   }
 
-  cluster_autoscaling {
-    enabled = false
-  }
+  # Remove the cluster_autoscaling block
+  # cluster_autoscaling {
+  #   enabled = false
+  # }
 
   ip_allocation_policy {
     cluster_ipv4_cidr_block  = "10.68.0.0/14"
