@@ -11,10 +11,16 @@ resource "google_container_cluster" "tfer--bc-1" {
   description        = "cluster for tmm-fcs"
   project            = "tmm-fcs-444213"
 
-  enable_autopilot   = false
+  # Remove the enable_autopilot setting
+  # enable_autopilot   = false
+
   networking_mode    = "VPC_NATIVE"
   network            = "projects/tmm-fcs-444213/global/networks/default"
   subnetwork         = "projects/tmm-fcs-444213/regions/us-central1/subnetworks/default"
+
+  # Remove default node pool and create custom one
+  remove_default_node_pool = true
+  initial_node_count       = 1
 
   binary_authorization {
     evaluation_mode = "DISABLED"
@@ -49,13 +55,11 @@ resource "google_container_cluster" "tfer--bc-1" {
       enabled = true
     }
   }
-
-  remove_default_node_pool = true
-  initial_node_count       = 1
 }
 
+# Create a custom node pool
 resource "google_container_node_pool" "primary_nodes" {
-  name       = "primary-node-pool-${random_string.cluster_suffix.result}"
+  name       = "primary-pool-${random_string.cluster_suffix.result}"
   location   = "us-central1-c"
   cluster    = google_container_cluster.tfer--bc-1.name
   node_count = 1
@@ -63,6 +67,8 @@ resource "google_container_node_pool" "primary_nodes" {
   node_config {
     preemptible  = false
     machine_type = "e2-medium"
+
+    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     service_account = "default"
     oauth_scopes    = [
       "https://www.googleapis.com/auth/cloud-platform"
