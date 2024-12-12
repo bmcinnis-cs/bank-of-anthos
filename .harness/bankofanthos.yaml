@@ -41,8 +41,16 @@ pipeline:
                     timeout: 10m
                     spec:
                       provisionerIdentifier: qa123
-                      configuration:
-                        type: InheritFromPlan
+                      cloudCliConfiguration:
+                        spec:
+                          configFiles:
+                            store:
+                              spec:
+                                connectorRef: tmmfcs
+                                gitFetchType: Branch
+                                branch: main
+                                folderPath: iac/tmm-gcp
+                              type: Github
               rollbackSteps:
                 - step:
                     type: TerraformRollback
