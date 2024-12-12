@@ -19,8 +19,8 @@ pipeline:
               steps:
                 - step:
                     type: TerraformPlan
-                    name: Plan
-                    identifier: Plan
+                    name: boaplan
+                    identifier: boaplan
                     timeout: 10m
                     spec:
                       provisionerIdentifier: qa123
