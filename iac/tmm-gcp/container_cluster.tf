@@ -11,23 +11,10 @@ resource "google_container_cluster" "tfer--bc-1" {
 
   initial_node_count = 0
 
-  addons_config {
-    dns_cache_config {
-      enabled = false
-    }
-    gce_persistent_disk_csi_driver_config {
-      enabled = true
-    }
-    horizontal_pod_autoscaling {
-      disabled = false
-    }
-    http_load_balancing {
-      disabled = false
-    }
-    network_policy_config {
-      disabled = true
-    }
-  }
+  # Remove the entire addons_config block
+  # addons_config {
+  #   ...
+  # }
 
   binary_authorization {
     evaluation_mode = "DISABLED"
@@ -66,8 +53,6 @@ resource "google_container_cluster" "tfer--bc-1" {
       enabled = true
     }
   }
-
-  # Remove network_policy block as it's disabled in addons_config
 
   # Other configurations remain the same...
 }
