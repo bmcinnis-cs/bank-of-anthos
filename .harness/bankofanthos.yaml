@@ -40,7 +40,7 @@ pipeline:
                     identifier: apply
                     timeout: 10m
                     spec:
-                      provisionerIdentifier: boaapply
+                      provisionerIdentifier: boaplan
                       configuration:
                         type: InheritFromPlan
               rollbackSteps:
