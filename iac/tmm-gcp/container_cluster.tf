@@ -1,18 +1,11 @@
-# Generate a random 4-character suffix
-resource "random_string" "cluster_suffix" {
-  length  = 4
-  special = false
-  upper   = false
-}
-
 # Data source to get the latest valid GKE version
 data "google_container_engine_versions" "gke_version" {
   location       = "us-central1-c"
   version_prefix = "1.31."
 }
 
-resource "google_container_cluster" {
-  name               = "bc-1-${random_string.cluster_suffix.result}"
+resource "google_container_cluster" "boa" {
+  name               = "boa"
   location           = "us-central1-c"
   description        = "cluster for tmm-fcs"
   project            = "tmm-fcs-444213"
