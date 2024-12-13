@@ -111,18 +111,9 @@ pipeline:
                   spec: {}
           services:
             values:
-              - serviceRef: accountsdb
-              - serviceRef: balancereader
-              - serviceRef: config
-              - serviceRef: contacts
-              - serviceRef: frontend
-              - serviceRef: ledgerdb
-              - serviceRef: ledgerwriter
-              - serviceRef: loadgenerator
-              - serviceRef: transactionhistory
-              - serviceRef: userservice
+              - serviceRef: boa
             metadata:
-              parallel: true
+              parallel: false
         tags: {}
         failureStrategies:
           - onFailure:
