@@ -5,14 +5,17 @@ resource "random_string" "cluster_suffix" {
   upper   = false
 }
 
+# Data source to get the latest valid GKE version
+data "google_container_engine_versions" "gke_version" {
+  location       = "us-central1-c"
+  version_prefix = "1.31."
+}
+
 resource "google_container_cluster" "tfer--bc-1" {
   name               = "bc-1-${random_string.cluster_suffix.result}"
   location           = "us-central1-c"
   description        = "cluster for tmm-fcs"
   project            = "tmm-fcs-444213"
-
-  # Remove the enable_autopilot setting
-  # enable_autopilot   = false
 
   networking_mode    = "VPC_NATIVE"
   network            = "projects/tmm-fcs-444213/global/networks/default"
@@ -21,6 +24,9 @@ resource "google_container_cluster" "tfer--bc-1" {
   # Remove default node pool and create custom one
   remove_default_node_pool = true
   initial_node_count       = 1
+
+  # Use the latest valid version from the "REGULAR" channel
+  min_master_version = data.google_container_engine_versions.gke_version.latest_master_version
 
   binary_authorization {
     evaluation_mode = "DISABLED"
@@ -43,14 +49,12 @@ resource "google_container_cluster" "tfer--bc-1" {
     channel = "REGULAR"
   }
 
-  min_master_version = "1.30.5-gke.1699000"
-
   logging_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
   }
 
   monitoring_config {
-    enable_components = ["CADVISOR", "DAEMONSET", "DEPLOYMENT", "HPA", "KUBELET", "POD", "STATEFULSET", "STORAGE", "SYSTEM_COMPONENTS"]
+    enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
     managed_prometheus {
       enabled = true
     }
@@ -63,6 +67,9 @@ resource "google_container_node_pool" "primary_nodes" {
   location   = "us-central1-c"
   cluster    = google_container_cluster.tfer--bc-1.name
   node_count = 1
+
+  # Use the same version as the master
+  version    = data.google_container_engine_versions.gke_version.latest_master_version
 
   node_config {
     preemptible  = false
