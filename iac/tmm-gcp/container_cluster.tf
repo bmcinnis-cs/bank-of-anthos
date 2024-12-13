@@ -8,7 +8,7 @@ resource "google_container_cluster" "boa" {
   name               = "boa"
   location           = "us-central1-c"
   description        = "cluster for tmm-fcs"
-  project            = var.project_id
+  project            = "tmm-fcs-444213"
 
   networking_mode    = "VPC_NATIVE"
   network            = "projects/${var.project_id}/global/networks/default"
@@ -104,11 +104,4 @@ resource "google_container_node_pool" "primary_nodes" {
     max_surge       = 1
     max_unavailable = 0
   }
-}
-
-# Variable for project ID
-variable "project_id" {
-  description = "The GCP project ID"
-  type        = string
-  default     = "tmm-fcs-444213"
 }
