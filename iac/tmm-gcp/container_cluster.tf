@@ -75,9 +75,9 @@ resource "google_container_cluster" "boa" {
 
 # Create a custom node pool
 resource "google_container_node_pool" "primary_nodes" {
-  name       = "primary-pool-${random_string.cluster_suffix.result}"
+  name       = "primary-pool"
   location   = "us-central1-c"
-  cluster    = google_container_cluster.tfer--bc-1.name
+  cluster    = google_container_cluster.tfer--boa.name
   node_count = 1
 
   # Use the same version as the master
