@@ -28,19 +28,6 @@ pipeline:
                   spec:
                     command: init
               - step:
-                  type: Checkov
-                  name: Checkov_1
-                  identifier: Checkov_1
-                  spec:
-                    mode: orchestration
-                    config: default
-                    target:
-                      type: repository
-                      detection: auto
-                    advanced:
-                      log:
-                        level: info
-              - step:
                   type: IACMTerraformPlugin
                   name: plan
                   identifier: plan
