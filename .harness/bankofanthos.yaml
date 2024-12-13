@@ -38,7 +38,7 @@ pipeline:
                     type: TerraformApply
                     name: apply
                     identifier: apply
-                    timeout: 10m
+                    timeout: 25m
                     spec:
                       provisionerIdentifier: qa123
                       cloudCliConfiguration:
