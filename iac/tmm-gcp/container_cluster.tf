@@ -4,6 +4,8 @@ data "google_container_engine_versions" "gke_version" {
   version_prefix = "1.31."
 }
 
+data "google_client_config" "provider" {}
+
 resource "google_container_cluster" "boa" {
   name     = "boa"
   location = "us-central1-c"
@@ -45,8 +47,64 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 }
 
+# Harness Delegate Module
+module "delegate" {
+  source  = "harness/harness-delegate/kubernetes"
+  version = "0.1.8"
+
+  account_id       = "1pqLXHFXQAidtmjjWuAWaQ"
+  delegate_token   = var.delegate_token
+  delegate_name    = "terraform-delegate"
+  deploy_mode      = "KUBERNETES"
+  namespace        = "harness-delegate-ng"
+  manager_endpoint = "https://app.harness.io"
+  delegate_image   = "harness/delegate:24.11.84502"
+  replicas         = 1
+  upgrader_enabled = true
+
+  depends_on = [google_container_node_pool.primary_nodes]
+}
+
+# Helm provider configuration
+provider "helm" {
+  kubernetes {
+    host                   = google_container_cluster.boa.endpoint
+    token                  = data.google_client_config.provider.access_token
+    cluster_ca_certificate = base64decode(google_container_cluster.boa.master_auth[0].cluster_ca_certificate)
+  }
+}
+
 variable "project_id" {
   description = "The GCP project ID"
   type        = string
   default     = "tmm-fcs-444213"
+}
+
+variable "delegate_token" {
+  description = "Harness Delegate Token"
+  type        = string
+  sensitive   = true
+}
+
+# Outputs
+output "cluster_name" {
+  value = google_container_cluster.boa.name
+}
+
+output "cluster_location" {
+  value = google_container_cluster.boa.location
+}
+
+output "delegate_name" {
+  value = module.delegate.delegate_name
+}
+
+output "kubeconfig" {
+  value     = base64encode(templatefile("${path.module}/kubeconfig-template.tpl", {
+    cluster_name    = google_container_cluster.boa.name,
+    endpoint        = google_container_cluster.boa.endpoint,
+    cluster_ca      = google_container_cluster.boa.master_auth[0].cluster_ca_certificate,
+    token           = data.google_client_config.provider.access_token,
+  }))
+  sensitive = true
 }
