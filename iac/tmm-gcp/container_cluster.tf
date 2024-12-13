@@ -4,7 +4,7 @@ data "google_container_engine_versions" "gke_version" {
   version_prefix = "1.31."
 }
 
-resource "google_container_cluster" "boa" {
+resource "google_container_cluster" "gke_cluster" {
   name               = "boa"
   location           = "us-central1-c"
   description        = "cluster for tmm-fcs"
