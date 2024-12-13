@@ -72,7 +72,7 @@ pipeline:
                         name: Canary Deployment
                         identifier: canaryDeployment
                         type: K8sCanaryDeploy
-                        timeout: 10m
+                        timeout: 25m
                         spec:
                           instanceSelection:
                             type: Count
@@ -83,7 +83,7 @@ pipeline:
                         name: Canary Delete
                         identifier: canaryDelete
                         type: K8sCanaryDelete
-                        timeout: 10m
+                        timeout: 25m
                         spec: {}
               - stepGroup:
                   name: Primary Deployment
@@ -93,9 +93,10 @@ pipeline:
                         name: Rolling Deployment
                         identifier: rollingDeployment
                         type: K8sRollingDeploy
-                        timeout: 10m
+                        timeout: 25m
                         spec:
                           skipDryRun: false
+                          pruningEnabled: false
             rollbackSteps:
               - step:
                   name: Canary Delete
