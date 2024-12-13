@@ -1,6 +1,13 @@
+# Data source to get the latest valid GKE version
 data "google_container_engine_versions" "gke_version" {
   location       = "us-central1-c"
   version_prefix = "1.31."
+}
+
+# Reference the existing service account
+data "google_service_account" "gke_sa" {
+  account_id = "harness-delegate-sa"
+  project    = var.project_id
 }
 
 resource "google_container_cluster" "boa" {
@@ -36,9 +43,11 @@ resource "google_container_node_pool" "primary_nodes" {
   node_config {
     machine_type = "e2-medium"
 
-    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = "default"
-    oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
+    # Use the existing service account
+    service_account = data.google_service_account.gke_sa.email
+    oauth_scopes    = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
   }
 }
 
