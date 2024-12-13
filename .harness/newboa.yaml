@@ -24,21 +24,21 @@ pipeline:
                   type: IACMTerraformPlugin
                   name: init
                   identifier: init
-                  timeout: 10m
+                  timeout: 25m
                   spec:
                     command: init
               - step:
                   type: IACMTerraformPlugin
                   name: plan
                   identifier: plan
-                  timeout: 10m
+                  timeout: 25m
                   spec:
                     command: plan
               - step:
                   type: IACMTerraformPlugin
                   name: apply
                   identifier: apply
-                  timeout: 10m
+                  timeout: 25m
                   spec:
                     command: apply
         tags: {}
