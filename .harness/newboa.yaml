@@ -41,4 +41,11 @@ pipeline:
                   timeout: 25m
                   spec:
                     command: apply
+              - step:
+                  type: Run
+                  name: Run_1
+                  identifier: Run_1
+                  spec:
+                    shell: Sh
+                    command: gcloud container clusters get-credentials ${terraform.output.cluster_name} --region ${terraform.output.cluster_location} --project ${terraform.output.project_id}
         tags: {}
