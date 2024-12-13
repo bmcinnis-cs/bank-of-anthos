@@ -62,8 +62,6 @@ pipeline:
                       skipRefreshCommand: false
             infrastructureDefinitions:
               - identifier: harnessk8sinfra
-          service:
-            serviceRef: boa
           execution:
             steps:
               - stepGroup:
@@ -111,6 +109,20 @@ pipeline:
                   type: K8sRollingRollback
                   timeout: 10m
                   spec: {}
+          services:
+            values:
+              - serviceRef: accountsdb
+              - serviceRef: balancereader
+              - serviceRef: config
+              - serviceRef: contacts
+              - serviceRef: frontend
+              - serviceRef: ledgerdb
+              - serviceRef: ledgerwriter
+              - serviceRef: loadgenerator
+              - serviceRef: transactionhistory
+              - serviceRef: userservice
+            metadata:
+              parallel: true
         tags: {}
         failureStrategies:
           - onFailure:
