@@ -8,11 +8,11 @@ resource "google_container_cluster" "boa" {
   name               = "boa"
   location           = "us-central1-c"
   description        = "cluster for tmm-fcs"
-  project            = "tmm-fcs-444213"
+  project            = var.project_id
 
   networking_mode    = "VPC_NATIVE"
-  network            = "projects/tmm-fcs-444213/global/networks/default"
-  subnetwork         = "projects/tmm-fcs-444213/regions/us-central1/subnetworks/default"
+  network            = "projects/${var.project_id}/global/networks/default"
+  subnetwork         = "projects/${var.project_id}/regions/us-central1/subnetworks/default"
 
   # Remove default node pool and create custom one
   remove_default_node_pool = true
@@ -67,7 +67,7 @@ resource "google_container_cluster" "boa" {
     }
   }
 
-  # Workload Identity configuration (optional, but recommended)
+  # Workload Identity configuration
   workload_identity_config {
     workload_pool = "${var.project_id}.svc.id.goog"
   }
@@ -77,7 +77,7 @@ resource "google_container_cluster" "boa" {
 resource "google_container_node_pool" "primary_nodes" {
   name       = "primary-pool"
   location   = "us-central1-c"
-  cluster    = google_container_cluster.tfer--boa.name
+  cluster    = google_container_cluster.boa.name
   node_count = 1
 
   # Use the same version as the master
@@ -106,7 +106,7 @@ resource "google_container_node_pool" "primary_nodes" {
   }
 }
 
-# Variable for project ID (add this at the top of your file or in a separate variables.tf file)
+# Variable for project ID
 variable "project_id" {
   description = "The GCP project ID"
   type        = string
