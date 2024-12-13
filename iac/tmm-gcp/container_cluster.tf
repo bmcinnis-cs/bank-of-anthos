@@ -4,12 +4,6 @@ data "google_container_engine_versions" "gke_version" {
   version_prefix = "1.31."
 }
 
-# Reference the existing service account
-data "google_service_account" "gke_sa" {
-  account_id = "harness-delegate-sa"
-  project    = var.project_id
-}
-
 resource "google_container_cluster" "boa" {
   name     = "boa"
   location = "us-central1-c"
