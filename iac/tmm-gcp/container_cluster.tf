@@ -96,10 +96,6 @@ output "cluster_location" {
   value = google_container_cluster.boa.location
 }
 
-output "delegate_name" {
-  value = module.delegate.delegate_name
-}
-
 output "kubeconfig" {
   value     = base64encode(templatefile("${path.module}/kubeconfig-template.tpl", {
     cluster_name    = google_container_cluster.boa.name,
