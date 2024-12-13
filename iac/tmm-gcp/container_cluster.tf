@@ -1,88 +1,60 @@
-# ... (previous GKE cluster and node pool configuration remains the same)
-
-resource "kubernetes_namespace" "harness_delegate" {
-  metadata {
-    name = "harness-delegate-ng"
-  }
-
-  depends_on = [google_container_node_pool.primary_nodes]
+# Data source to get the latest valid GKE version
+data "google_container_engine_versions" "gke_version" {
+  location       = "us-central1-c"
+  version_prefix = "1.31."
 }
 
-resource "kubernetes_secret" "delegate_token" {
-  metadata {
-    name      = "harness-delegate-token"
-    namespace = kubernetes_namespace.harness_delegate.metadata[0].name
-  }
+resource "google_container_cluster" "boa" {
+  name     = "boa"
+  location = "us-central1-c"
+  project  = var.project_id
 
-  data = {
-    "DELEGATE_TOKEN" = var.delegate_token
+  # Use the latest valid version from the "REGULAR" channel
+  min_master_version = data.google_container_engine_versions.gke_version.latest_master_version
+
+  # Remove default node pool and create custom one
+  remove_default_node_pool = true
+  initial_node_count       = 1
+
+  # Networking (minimal required settings)
+  networking_mode = "VPC_NATIVE"
+  network         = "default"
+  subnetwork      = "default"
+
+  # IP allocation policy (required for VPC-native clusters)
+  ip_allocation_policy {}
+
+  # Disable the default compute service account
+  node_config {
+    service_account = "harness-delegate-sa@tmm-fcs-444213.iam.gserviceaccount.com"
+    oauth_scopes    = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
   }
 }
 
-resource "kubernetes_deployment" "harness_delegate" {
-  metadata {
-    name      = "harness-delegate"
-    namespace = kubernetes_namespace.harness_delegate.metadata[0].name
+resource "google_container_node_pool" "primary_nodes" {
+  name       = "primary-pool"
+  location   = "us-central1-c"
+  cluster    = google_container_cluster.boa.name
+  node_count = 1
+
+  # Use the same version as the master
+  version = data.google_container_engine_versions.gke_version.latest_master_version
+
+  node_config {
+    machine_type = "e2-medium"
+
+    # Use the existing service account
+    service_account = "harness-delegate-sa@tmm-fcs-444213.iam.gserviceaccount.com"
+    oauth_scopes    = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
   }
-
-  spec {
-    replicas = 1
-
-    selector {
-      match_labels = {
-        app = "harness-delegate"
-      }
-    }
-
-    template {
-      metadata {
-        labels = {
-          app = "harness-delegate"
-        }
-      }
-
-      spec {
-        container {
-          image = "harness/delegate:24.11.84502"
-          name  = "harness-delegate"
-
-          env {
-            name = "ACCOUNT_ID"
-            value = "1pqLXHFXQAidtmjjWuAWaQ"
-          }
-
-          env {
-            name = "DELEGATE_TOKEN"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.delegate_token.metadata[0].name
-                key  = "DELEGATE_TOKEN"
-              }
-            }
-          }
-
-          env {
-            name  = "DELEGATE_NAME"
-            value = "terraform-delegate"
-          }
-
-          env {
-            name  = "MANAGER_HOST_AND_PORT"
-            value = "https://app.harness.io"
-          }
-        }
-      }
-    }
-  }
-
-  depends_on = [kubernetes_secret.delegate_token]
 }
 
-variable "delegate_token" {
-  description = "Harness Delegate Token"
+variable "project_id" {
+  description = "The GCP project ID"
   type        = string
-  sensitive   = true
-  default = "NDY3OWFiZGJhZWMwZDhkMjQ0MzE4YmQ0MTkzNzM1M2Y="
+  default     = "tmm-fcs-444213"
 }
-
-# ... (rest of your configuration, including outputs)
