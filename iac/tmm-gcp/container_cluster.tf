@@ -11,8 +11,8 @@ resource "google_container_cluster" "boa" {
   project            = "tmm-fcs-444213"
 
   networking_mode    = "VPC_NATIVE"
-  network            = "projects/${var.project_id}/global/networks/default"
-  subnetwork         = "projects/${var.project_id}/regions/us-central1/subnetworks/default"
+  network            = "projects/tmm-fcs-444213/global/networks/default"
+  subnetwork         = "projects/tmm-fcs-444213/regions/us-central1/subnetworks/default"
 
   # Remove default node pool and create custom one
   remove_default_node_pool = true
@@ -69,7 +69,7 @@ resource "google_container_cluster" "boa" {
 
   # Workload Identity configuration
   workload_identity_config {
-    workload_pool = "${var.project_id}.svc.id.goog"
+    workload_pool = "tmm-fcs-444213.svc.id.goog"
   }
 }
 
