@@ -11,12 +11,6 @@ pipeline:
         description: ""
         type: IACM
         spec:
-          platform:
-            os: Linux
-            arch: Amd64
-          runtime:
-            type: Cloud
-            spec: {}
           workspace: boa
           execution:
             steps:
@@ -48,4 +42,20 @@ pipeline:
                   spec:
                     shell: Sh
                     command: gcloud container clusters get-credentials ${terraform.output.cluster_name} --region ${terraform.output.cluster_location} --project ${terraform.output.project_id}
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: harnessk8sconnector
+              namespace: boa-pipe
+              volumes: []
+              annotations: {}
+              labels: {}
+              automountServiceAccountToken: true
+              nodeSelector: {}
+              containerSecurityContext:
+                capabilities:
+                  drop: []
+                  add: []
+              os: Linux
+              hostNames: []
         tags: {}
