@@ -29,13 +29,13 @@ resource "google_container_node_pool" "primary_nodes" {
   name       = "primary-pool"
   location   = "us-central1-c"
   cluster    = google_container_cluster.boa.name
-  node_count = 1
+  node_count = 2
 
   # Use the same version as the master
   version = data.google_container_engine_versions.gke_version.latest_master_version
 
   node_config {
-    machine_type = "e2-medium"
+    machine_type = "e2-standard-2"
 
     # Use the existing service account
     service_account = "harness-delegate-sa@tmm-fcs-444213.iam.gserviceaccount.com"
