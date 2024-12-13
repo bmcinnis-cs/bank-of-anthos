@@ -44,7 +44,7 @@ resource "google_container_node_pool" "primary_nodes" {
     machine_type = "e2-medium"
 
     # Use the existing service account
-    service_account = data.google_service_account.gke_sa.email
+    service_account = "harness-delegate-sa@tmm-fcs-444213.iam.gserviceaccount.com"
     oauth_scopes    = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
