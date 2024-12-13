@@ -9,7 +9,6 @@ resource "google_container_cluster" "boa" {
   location           = "us-central1-c"
   description        = "cluster for tmm-fcs"
   project            = "tmm-fcs-444213"
-
   networking_mode    = "VPC_NATIVE"
   network            = "projects/tmm-fcs-444213/global/networks/default"
   subnetwork         = "projects/tmm-fcs-444213/regions/us-central1/subnetworks/default"
