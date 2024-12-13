@@ -65,27 +65,6 @@ pipeline:
           execution:
             steps:
               - stepGroup:
-                  name: Canary Deployment
-                  identifier: canaryDeployment
-                  steps:
-                    - step:
-                        name: Canary Deployment
-                        identifier: canaryDeployment
-                        type: K8sCanaryDeploy
-                        timeout: 25m
-                        spec:
-                          instanceSelection:
-                            type: Count
-                            spec:
-                              count: 1
-                          skipDryRun: false
-                    - step:
-                        name: Canary Delete
-                        identifier: canaryDelete
-                        type: K8sCanaryDelete
-                        timeout: 25m
-                        spec: {}
-              - stepGroup:
                   name: Primary Deployment
                   identifier: primaryDeployment
                   steps:
