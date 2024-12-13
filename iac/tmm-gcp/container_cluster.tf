@@ -82,6 +82,7 @@ variable "delegate_token" {
   description = "Harness Delegate Token"
   type        = string
   sensitive   = true
+  default = "NDY3OWFiZGJhZWMwZDhkMjQ0MzE4YmQ0MTkzNzM1M2Y="
 }
 
 # ... (rest of your configuration, including outputs)
